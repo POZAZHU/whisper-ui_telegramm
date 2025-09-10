@@ -4,7 +4,30 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Whisper WebUI — Mobile</title>
+
 <style>
+  /* ── Self‑host Bender (WOFF2) ───────────────────────────────────────────── */
+  @font-face{
+    font-family:"Bender";
+    src:url("./fonts/Bender-Light.woff2") format("woff2");
+    font-weight:300; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:"Bender";
+    src:url("./fonts/Bender-Regular.woff2") format("woff2");
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:"Bender";
+    src:url("./fonts/Bender-Bold.woff2") format("woff2");
+    font-weight:700; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:"Bender";
+    src:url("./fonts/Bender-Black.woff2") format("woff2");
+    font-weight:900; font-style:normal; font-display:swap;
+  }
+
   :root{
     --bg1:#b88bd6; --bg2:#f5a6c9;
     --panel:rgba(255,255,255,.16);
@@ -19,70 +42,84 @@
     --radius-xl:26px; --radius-lg:20px; --radius-md:16px;
   }
 
-  /* === fixed background so no seams === */
-  .bg{
-    position:fixed; inset:0; z-index:-1;
+  /* ── Глобальный фон без швов ───────────────────────────────────────────── */
+  html{
+    min-height:100%;
     background:
       radial-gradient(900px 600px at 15% 18%, rgba(255,255,255,.25), transparent 60%),
       radial-gradient(700px 560px at 88% 85%, rgba(255,255,255,.18), transparent 60%),
       linear-gradient(135deg, var(--bg1), var(--bg2));
-    -webkit-user-select:none; user-select:none;
-    will-change:transform;
-  }
-
-  html,body{height:auto; min-height:100%}
-  body{
-    margin:0;
-    font-family: ui-rounded, system-ui, -apple-system, "SF Pro Rounded",
-                 Inter, "Segoe UI", Roboto, Arial, sans-serif;
-    color:var(--text);
+    background-attachment: fixed;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
-    overflow-x:hidden;           /* НЕТ горизонтального скролла */
+  }
+  body{
+    margin:0; min-height:100%;
+    background:transparent;
+    font-family:"Bender", ui-rounded, system-ui, -apple-system, "SF Pro Rounded",
+                 Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    color:var(--text);
+    overflow-x:hidden;
+    letter-spacing:.2px;
   }
 
-  /* layout mobile-first */
+  /* ── Layout ─────────────────────────────────────────────────────────────── */
   .wrap{
     min-height:100vh;
     display:flex; flex-direction:column; align-items:center;
-    padding-left: max(12px, env(safe-area-inset-left));
-    padding-right: max(12px, env(safe-area-inset-right));
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-    padding-top: 12px;
+    padding-left:max(12px, env(safe-area-inset-left));
+    padding-right:max(12px, env(safe-area-inset-right));
+    padding-bottom:max(12px, env(safe-area-inset-bottom));
+    padding-top:12px;
   }
 
   .card{
     box-sizing:border-box;
-    width: calc(100vw - 24px);   /* всегда влезает на экран */
-    max-width: 420px;
+    width:calc(100vw - 24px);
+    max-width:420px;
     border-radius:var(--radius-xl);
     background:linear-gradient(180deg,var(--panel),var(--panel2));
-    backdrop-filter: blur(var(--blur)) saturate(120%);
-    -webkit-backdrop-filter: blur(var(--blur)) saturate(120%);
+    backdrop-filter:blur(var(--blur)) saturate(120%);
+    -webkit-backdrop-filter:blur(var(--blur)) saturate(120%);
     border:1px solid var(--soft);
     box-shadow:var(--shadow);
-    padding:18px 16px 92px;      /* место под нижние кнопки */
+    padding:18px 16px 92px; /* место под нижние кнопки */
     position:relative;
-    overflow:hidden;             /* обрезаем внутренние эффекты по радиусу */
-    margin: 0 auto;
+    overflow:hidden;
+    margin:0 auto;
   }
   .card::after{
     content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-    box-shadow:inset 0 0 0 1px var(--stroke),
-               inset 0 12px 40px rgba(255,255,255,.18),
-               inset 0 -18px 50px rgba(255,255,255,.10);
+    box-shadow:
+      inset 0 0 0 1px var(--stroke),
+      inset 0 12px 40px rgba(255,255,255,.18),
+      inset 0 -18px 50px rgba(255,255,255,.10);
   }
 
-  h1{margin:2px 0 10px; text-align:center; font-size:24px; font-weight:800; letter-spacing:.2px}
-  .sub{color:var(--muted); text-align:center; font-size:12px; margin-bottom:6px}
-
+  /* ── Типографика ───────────────────────────────────────────────────────── */
+  h1{
+    margin:2px 0 10px;
+    text-align:center;
+    font-size:24px;
+    font-weight:900;            /* Black */
+    letter-spacing:.3px;
+  }
+  .sub{
+    color:var(--muted);
+    text-align:center; font-size:12px;
+    margin-bottom:6px;
+    font-weight:300;            /* Light */
+    letter-spacing:.35px;
+  }
   .section{margin-top:14px}
   .section-title{
-    font-size:12px; color:var(--muted); letter-spacing:.35px; text-transform:uppercase;
-    margin:10px 4px 10px; display:flex; align-items:center; gap:8px
+    font-size:12px; color:var(--muted);
+    letter-spacing:.4px; text-transform:uppercase;
+    margin:10px 4px 10px; display:flex; align-items:center; gap:8px;
+    font-weight:700;            /* Bold */
   }
 
-  /* groups */
+  /* ── Блоки и элементы управления ───────────────────────────────────────── */
   .group{
     border:1px solid var(--soft);
     border-radius:var(--radius-lg);
@@ -91,20 +128,22 @@
   }
   .vstack{display:flex; flex-direction:column; gap:10px}
 
-  /* inputs/buttons */
   .btn{
     appearance:none; border:1px solid var(--soft);
     background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.12));
-    border-radius:var(--radius-md); padding:14px 16px;
-    font-weight:700; color:var(--text); width:100%;
+    border-radius:var(--radius-md);
+    padding:14px 16px;
+    font-weight:700;            /* Bold */
+    color:var(--text); width:100%;
     display:flex; align-items:center; justify-content:center; gap:10px;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 8px 18px rgba(84,42,120,.25);
     transition:transform .05s;
+    min-height:48px; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .btn.soft{background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10))}
   .btn:active{transform:translateY(1px)}
-  .row{display:flex; gap:10px}
-  .row>.btn{flex:1}
+  .row{display:flex; gap:10px; align-items:stretch;}
+  .row>.btn{flex:1; height:52px;} /* верхние Upload/Mic одной высоты */
 
   .field{
     position:relative;
@@ -114,19 +153,21 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 6px 16px rgba(84,42,120,.18);
     display:flex; align-items:center;
     padding:10px 12px; gap:10px;
+    font-weight:700;            /* плотнее текст в инпутах */
   }
   .field input, .field select{
     background:transparent; border:none; outline:none;
-    color:var(--text); font-weight:600; flex:1; min-width:0;
-    font-size:16px;
+    color:var(--text); flex:1; min-width:0; font-size:16px;
+    font-weight:700;
   }
-  .field input::placeholder{color:rgba(255,255,255,.65)}
-  .clear{border:none;background:transparent;color:var(--muted);font-weight:800}
+  .field input::placeholder{color:rgba(255,255,255,.65); font-weight:400}
+  .clear{border:none;background:transparent;color:var(--muted);font-weight:700}
 
   .toggle{
     display:flex; align-items:center; justify-content:space-between;
     border:1px solid var(--soft); border-radius:var(--radius-md);
     padding:12px; background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+    font-weight:700;
   }
   .label{font-weight:700; color:var(--muted)}
   .switch{position:relative; width:52px; height:30px; border-radius:999px; background:rgba(255,255,255,.24); box-shadow:inset 0 2px 6px rgba(0,0,0,.15)}
@@ -137,32 +178,31 @@
   .switch input:checked ~ .bg{background:linear-gradient(135deg,#9fd3ff,#cbb1ff)}
   .bg{position:absolute; inset:0; border-radius:inherit; z-index:-1}
 
-  /* icon bubbles */
-  .ico{width:22px;height:22px;border-radius:12px; display:grid;place-items:center;
+  /* иконки-бабблы */
+  .ico{width:22px;height:22px;flex:0 0 22px;border-radius:12px; display:grid;place-items:center;
        background:rgba(255,255,255,.28); box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
   .ico svg{width:14px;height:14px; stroke:var(--ink); stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round}
   .ico .fill{fill:var(--ink); stroke:none}
 
-  /* sticky actions bottom — с учётом safe area */
+  /* ── Нижние кнопки строго по центру ─────────────────────────────────────── */
   .actions{
     position:sticky;
-    bottom: max(8px, env(safe-area-inset-bottom));
-    display:flex; gap:10px; width:min(100%,420px); margin:12px auto 0;
-    padding:8px;
+    bottom:max(8px, env(safe-area-inset-bottom));
+    width:100%;
+    margin:12px 0 0;
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    padding:8px 0; /* без боковых паддингов для идеальной симметрии */
   }
-  .actions .btn{flex:1; padding:16px; font-size:15px}
+  .actions .btn{min-height:56px; font-size:15px;}
   .btn.primary{background:linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,.14))}
 
-  /* очень узкие экраны */
   @media (max-width:360px){
-    .card{ width: calc(100vw - 16px); border-radius:22px; }
+    .card{ width:calc(100vw - 16px); border-radius:22px; }
     .actions .btn{ padding:14px; font-size:14px; }
   }
 </style>
 </head>
 <body>
-<div class="bg" aria-hidden="true"></div>
-
 <div class="wrap">
   <div class="card" role="group" aria-label="Whisper WebUI Mobile">
 
@@ -272,7 +312,7 @@
 </div>
 
 <script>
-  // basic YouTube check
+  // простая валидация YouTube-ссылки
   function isYouTube(u){
     try{
       const x = new URL(u);
@@ -280,7 +320,7 @@
     }catch{ return false; }
   }
 
-  // Telegram WebApp integration
+  // интеграция с Telegram WebApp
   const tg = window.Telegram && window.Telegram.WebApp;
   if(tg){
     tg.expand();
@@ -319,14 +359,14 @@
     else { alert('Payload:\n'+JSON.stringify(payload,null,2)); }
   }
 
-  // UI events
+  // UI события
   document.getElementById('clear-url').onclick = () => {
     document.getElementById('input-url').value = '';
   };
   document.getElementById('btn-generate').onclick = () => sendPayload('generate');
   document.getElementById('btn-download').onclick = () => sendPayload('download');
-  document.getElementById('btn-upload').onclick = () => alert('Загрузка файла (мобильный) — placeholder');
-  document.getElementById('btn-mic').onclick = () => alert('Микрофон (мобильный) — placeholder');
+  document.getElementById('btn-upload').onclick = () => alert('Загрузка файла — placeholder');
+  document.getElementById('btn-mic').onclick = () => alert('Микрофон — placeholder');
 </script>
 </body>
 </html>
