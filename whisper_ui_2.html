@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Glass UI — Pixel Slot Ready</title>
+<style>
+  :root{
+    --bg1:#b88bd6; --bg2:#f5a6c9;
+    --panel:rgba(255,255,255,.16);
+    --panel2:rgba(255,255,255,.10);
+    --soft:rgba(255,255,255,.35);
+    --stroke:rgba(255,255,255,.48);
+    --text:rgba(255,255,255,.94);
+    --muted:rgba(255,255,255,.72);
+    --accent:#4d2c79;      /* основной штрих для иконок */
+    --shadow:0 20px 60px rgba(101,60,140,.35);
+    --blur:24px;
+    --r-lg:28px; --r-md:16px; --r-sm:12px; --r-xs:9px;
+  }
+  html,body{height:100%}
+  body{
+    margin:0; font-family:ui-rounded,system-ui,-apple-system,"SF Pro Rounded","Segoe UI",Inter,Roboto,Arial,sans-serif;
+    background:
+      radial-gradient(1000px 700px at 15% 22%, rgba(255,255,255,.26), transparent 60%),
+      radial-gradient(820px 620px at 85% 78%, rgba(255,255,255,.18), transparent 60%),
+      linear-gradient(135deg, var(--bg1), var(--bg2));
+    color:var(--text); display:grid; place-items:center;
+  }
+  .card{
+    width:min(92vw,560px);
+    border-radius:var(--r-lg);
+    padding:24px;
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--soft);
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(var(--blur)) saturate(120%);
+    -webkit-backdrop-filter:blur(var(--blur)) saturate(120%);
+    position:relative;
+  }
+  .card::after{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    box-shadow:
+      inset 0 0 0 1px var(--stroke),
+      inset 0 12px 40px rgba(255,255,255,.18),
+      inset 0 -18px 50px rgba(255,255,255,.10);
+  }
+  h1{margin:0 0 14px 0; text-align:center; font-size:28px; letter-spacing:.3px}
+  .sub{color:var(--muted); text-align:center; font-size:12px; margin-bottom:6px}
+
+  .section{margin-top:18px}
+  .section-title{
+    font-size:13px; color:var(--muted); letter-spacing:.38px; text-transform:uppercase;
+    margin:10px 2px 10px; display:flex; align-items:center; gap:6px
+  }
+
+  .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .actions{display:flex; gap:12px; margin-top:14px}
+
+  .btn{
+    -webkit-tap-highlight-color:transparent;
+    appearance:none; border:0; cursor:pointer;
+    border-radius:var(--r-md); padding:14px 16px;
+    background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.12));
+    border:1px solid var(--soft);
+    color:var(--text); font-weight:650;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 8px 20px rgba(84,42,120,.25);
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    transition:transform .06s ease, box-shadow .2s ease, background .2s ease;
+    text-shadow:0 1px 0 rgba(0,0,0,.15);
+  }
+  .btn.soft{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.10))}
+  .btn.primary{background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.14))}
+  .btn:active{transform:translateY(1px) scale(.995)}
+  .btn[disabled]{opacity:.55; cursor:not-allowed}
+  .actions .btn{flex:1 1 auto; padding:16px; font-size:15px}
+
+  .ico{
+    width:22px;height:22px;border-radius:var(--r-sm);
+    background:rgba(255,255,255,.28);
+    display:grid;place-items:center;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  .ico svg{
+    width:14px;height:14px; display:block;
+    stroke:var(--accent); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;
+  }
+  .ico .fill{fill:var(--accent); stroke:none}
+
+  .tiny-ico{
+    width:18px;height:18px;border-radius:var(--r-xs);
+    background:rgba(255,255,255,.22);
+    display:grid;place-items:center;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  .tiny-ico svg{width:12px;height:12px; stroke-width:1.8}
+
+  .select{position:relative}
+  .select select{
+    width:100%; appearance:none; outline:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.10));
+    border:1px solid var(--soft); border-radius:14px;
+    padding:14px 40px 14px 14px; color:var(--text); font-weight:600;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 8px 20px rgba(84,42,120,.20);
+  }
+  .select:after{content:"▾"; position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:700; pointer-events:none}
+
+  .toggle{
+    display:flex; align-items:center; gap:10px; padding:10px 12px;
+    border-radius:14px;
+    background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.08));
+    border:1px solid var(--soft);
+  }
+  .label{font-weight:650; color:var(--muted); letter-spacing:.2px}
+  .switch{position:relative; width:48px; height:28px; border-radius:100px; background:rgba(255,255,255,.22); box-shadow:inset 0 2px 6px rgba(0,0,0,.12); transition:background .2s ease}
+  .switch input{display:none}
+  .knob{position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:white;
+        box-shadow:0 3px 10px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.8); transition:left .18s ease}
+  .switch input:checked + .knob{left:23px}
+  .switch input:checked ~ .bg{background:linear-gradient(135deg,#9fd3ff,#cbb1ff)}
+  .bg{position:absolute; inset:0; border-radius:inherit; z-index:-1}
+
+  .chip{
+    background:rgba(255,255,255,.18);
+    border:1px solid var(--soft);
+    padding:10px 12px; border-radius:16px; color:var(--muted);
+    font-weight:700; display:flex; align-items:center; gap:10px;
+  }
+  .author{margin-top:8px; text-align:center; color:var(--muted); font-size:12px}
+
+  @media (max-width:420px){
+    .grid-3{grid-template-columns:1fr}
+    .grid-2{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SVG SPRITE (иконки). ВСТАВЛЯЙ ТОЧНЫЕ ПУТИ В ПОМЕЧЕННЫЕ МЕСТА ===== -->
+<svg width="0" height="0" style="position:absolute;visibility:hidden">
+  <!-- tiny sliders / input icon -->
+  <symbol id="ico-sliders" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE if нужно -->
+    <path d="M4 7h12M4 17h16M16 7V5M8 17v-2"/>
+  </symbol>
+
+  <!-- Upload Files -->
+  <symbol id="ico-upload" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M4 19h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-3.5l-2-2H8L6 10H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2z"/>
+    <path d="M12 14V8M9.5 10.5 12 8l2.5 2.5"/>
+  </symbol>
+
+  <!-- YouTube URL (бренд-близко; если в рефе другая форма углов/соотношение — просто замени rect/triangle) -->
+  <symbol id="ico-youtube" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <rect x="3" y="6" width="18" height="12" rx="4" class="fill"/>
+    <polygon points="10,9 16,12 10,15" fill="white" stroke="none"/>
+  </symbol>
+
+  <!-- Microphone -->
+  <symbol id="ico-mic" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M12 14a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v4a3 3 0 0 0 3 3z"/>
+    <path d="M5 12a7 7 0 0 0 14 0M12 19v3"/>
+  </symbol>
+
+  <!-- Globe / Translator -->
+  <symbol id="ico-globe" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18Z"/>
+    <path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>
+  </symbol>
+
+  <!-- User/Voice (диаризация) -->
+  <symbol id="ico-user-voice" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"/>
+    <path d="M4 20a8 8 0 0 1 16 0"/>
+    <path d="M19 8c1.8 1 1.8 3 0 4"/>
+  </symbol>
+
+  <!-- Play -->
+  <symbol id="ico-play" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <polygon points="9,7 17,12 9,17" class="fill"/>
+  </symbol>
+
+  <!-- Download -->
+  <symbol id="ico-download" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M12 3v10M8.5 9.5 12 13l3.5-3.5"/>
+    <path d="M4 20h16"/>
+  </symbol>
+
+  <!-- Wave / VAD -->
+  <symbol id="ico-wave" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M3 12c2-4 4 4 6 0s4 4 6 0 4 4 6 0"/>
+  </symbol>
+
+  <!-- Pause/Segment -->
+  <symbol id="ico-pause-cut" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M8 6v12M12 6v12"/>
+    <path d="M16 8l4 4-4 4"/>
+  </symbol>
+
+  <!-- Scissors (если у тебя другой знак сегментации — сюда) -->
+  <symbol id="ico-scissors" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M4 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM4 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+    <path d="M6 9l14-6M6 15l14 6"/>
+  </symbol>
+
+  <!-- Translate (альтернативная) -->
+  <symbol id="ico-translate" viewBox="0 0 24 24">
+    <!-- REPLACE WITH EXACT PATHS FROM YOUR REFERENCE -->
+    <path d="M4 5h9M8 5c0 7 6 9 6 9"/>
+    <path d="M5 14h7M14 13h5M17 13l-2 6"/>
+  </symbol>
+</svg>
+
+<div class="card" role="group" aria-label="Glass UI">
+  <div class="sub">Neumorphic / Glass — Pixel‑Slot Ready</div>
+  <h1>Whisper WebUI</h1>
+
+  <!-- INPUT SOURCE -->
+  <div class="section">
+    <div class="section-title">
+      <span class="tiny-ico" aria-hidden="true"><svg><use href="#ico-sliders"/></svg></span>
+      Input Source
+    </div>
+    <div class="grid-3">
+      <button class="btn soft" id="btn-upload" aria-label="Upload File">
+        <span class="ico"><svg><use href="#ico-upload"/></svg></span> Upload File
+      </button>
+      <button class="btn soft" id="btn-youtube" aria-label="YouTube URL">
+        <span class="ico"><svg><use href="#ico-youtube"/></svg></span> YouTube URL
+      </button>
+      <button class="btn soft" id="btn-mic" aria-label="Microphone Input">
+        <span class="ico"><svg><use href="#ico-mic"/></svg></span> Microphone Input
+      </button>
+    </div>
+  </div>
+
+  <!-- MODEL SETTINGS -->
+  <div class="section">
+    <div class="section-title">
+      <span class="tiny-ico" aria-hidden="true"><svg><use href="#ico-sliders"/></svg></span>
+      Model Settings
+    </div>
+    <div class="grid-2">
+      <label class="select">
+        <select id="sel-model" aria-label="Whisper Model">
+          <option>Whisper Model</option>
+          <option>tiny</option><option>base</option><option>small</option>
+          <option>medium</option><option>large-v3</option>
+        </select>
+      </label>
+      <label class="select">
+        <select id="sel-size" aria-label="Model Size">
+          <option>Model Size</option>
+          <option>tiny.en</option><option>base.en</option><option>small.en</option>
+          <option>medium.en</option><option>large-v3</option>
+        </select>
+      </label>
+      <label class="select">
+        <select id="sel-lang" aria-label="Language">
+          <option>Language</option>
+          <option>Auto</option><option>English</option><option>Русский</option>
+          <option>Deutsch</option><option>Español</option>
+        </select>
+      </label>
+      <label class="select">
+        <select id="sel-detect" aria-label="Auto-Detect">
+          <option>Auto-Detect</option><option>Forced</option><option>Guess</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="grid-2" style="margin-top:12px">
+      <div class="toggle">
+        <span class="ico" aria-hidden="true"><svg><use href="#ico-wave"/></svg></span>
+        <label class="switch">
+          <input type="checkbox" id="tog-vad"/>
+          <span class="knob"></span><span class="bg"></span>
+        </label>
+        <div class="label">Voice Activity Detection (VAD)</div>
+      </div>
+      <div class="toggle">
+        <span class="ico" aria-hidden="true"><svg><use href="#ico-pause-cut"/></svg></span>
+        <label class="switch">
+          <input type="checkbox" id="tog-segpause" checked/>
+          <span class="knob"></span><span class="bg"></span>
+        </label>
+        <div class="label">Segment by Pause</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:12px">
+      <div class="toggle">
+        <span class="ico" aria-hidden="true"><svg><use href="#ico-translate"/></svg></span>
+        <label class="switch">
+          <input type="checkbox" id="tog-translate"/>
+          <span class="knob"></span><span class="bg"></span>
+        </label>
+        <div class="label">Subtitle Translation</div>
+      </div>
+      <div class="chip" role="note">
+        <span class="ico" aria-hidden="true"><svg><use href="#ico-globe"/></svg></span>
+        Translator (DeepL / NLLB)
+      </div>
+    </div>
+  </div>
+
+  <!-- POSTPROCESSING -->
+  <div class="section">
+    <div class="section-title">
+      <span class="tiny-ico" aria-hidden="true"><svg><use href="#ico-sliders"/></svg></span>
+      Postprocessing
+    </div>
+    <div class="grid-2">
+      <div class="toggle">
+        <span class="ico" aria-hidden="true"><svg><use href="#ico-user-voice"/></svg></span>
+        <label class="switch">
+          <input type="checkbox" id="tog-diar"/>
+          <span class="knob"></span><span class="bg"></span>
+        </label>
+        <div class="label">Speaker Diarisation</div>
+      </div>
+      <div class="toggle">
+        <span class="ico" aria-hidden="true"><svg><use href="#ico-scissors"/></svg></span>
+        <label class="switch">
+          <input type="checkbox" id="tog-seg2"/>
+          <span class="knob"></span><span class="bg"></span>
+        </label>
+        <div class="label">Segment by Pause</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="btn primary" id="btn-generate">
+      <span class="ico" aria-hidden="true"><svg><use href="#ico-play"/></svg></span>
+      Generate &amp; Play
+    </button>
+    <button class="btn soft" id="btn-download">
+      <span class="ico" aria-hidden="true"><svg><use href="#ico-download"/></svg></span>
+      Download <span style="font-weight:600;opacity:.8">(SRT, TXT, VTT)</span>
+    </button>
+  </div>
+
+  <div class="author">Author: Alexander Shilov</div>
+</div>
+
+<script>
+  // Telegram WebApp интеграция (опционально)
+  (function(){
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if(!tg) return;
+    tg.expand();
+    tg.MainButton.setText('Send Config').hide();
+    const show = () => tg.MainButton.show();
+    document.querySelectorAll('select,input[type=checkbox]').forEach(el=>el.addEventListener('change', show));
+    tg.MainButton.onClick(()=> tg.sendData(JSON.stringify(collectConfig())));
+  })();
+
+  function collectConfig(){
+    const q = s=>document.querySelector(s);
+    return {
+      model:q('#sel-model').value,
+      size:q('#sel-size').value,
+      lang:q('#sel-lang').value,
+      detect:q('#sel-detect').value,
+      vad:q('#tog-vad').checked,
+      segByPause:q('#tog-segpause').checked,
+      translate:q('#tog-translate').checked,
+      diar:q('#tog-diar').checked,
+      seg2:q('#tog-seg2').checked
+    };
+  }
+
+  // демо‑обработчики
+  document.getElementById('btn-generate').onclick=()=>alert('Generate with:\\n'+JSON.stringify(collectConfig(),null,2));
+  document.getElementById('btn-download').onclick=()=>alert('Download: SRT / TXT / VTT');
+  document.getElementById('btn-upload').onclick=()=>alert('Upload dialog placeholder');
+  document.getElementById('btn-youtube').onclick=()=>{const u=prompt('Paste YouTube URL:'); if(u) alert('URL set: '+u);};
+  document.getElementById('btn-mic').onclick=()=>alert('Microphone access placeholder');
+</script>
+</body>
+</html>
